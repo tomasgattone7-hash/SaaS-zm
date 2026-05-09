@@ -15,6 +15,7 @@
     "db:seed": "tsx api/src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "api:test-auth": "tsx api/src/scripts/test-auth.ts",
+    "api:test-crud": "tsx api/src/scripts/test-crud.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

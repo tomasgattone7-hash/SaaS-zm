@@ -136,6 +136,64 @@ export const auditLogs = pgTable(
 export const companiesRelations = relations(companies, ({ many }) => ({
   memberships: many(memberships),
   auditLogs: many(auditLogs),
+  customers: many(customers),
+  suppliers: many(suppliers),
+}));
+
+export const customers = pgTable(
+  "customers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "restrict" }),
+    name: text("name").notNull(),
+    email: text("email"),
+    phone: text("phone"),
+    notes: text("notes"),
+    status: text("status").notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("customers_company_idx").on(table.companyId),
+    check("customers_status_check", sql`${table.status} in ('active', 'inactive')`),
+  ]
+);
+
+export const suppliers = pgTable(
+  "suppliers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "restrict" }),
+    name: text("name").notNull(),
+    email: text("email"),
+    phone: text("phone"),
+    notes: text("notes"),
+    status: text("status").notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("suppliers_company_idx").on(table.companyId),
+    check("suppliers_status_check", sql`${table.status} in ('active', 'inactive')`),
+  ]
+);
+
+export const customersRelations = relations(customers, ({ one }) => ({
+  company: one(companies, {
+    fields: [customers.companyId],
+    references: [companies.id],
+  }),
+}));
+
+export const suppliersRelations = relations(suppliers, ({ one }) => ({
+  company: one(companies, {
+    fields: [suppliers.companyId],
+    references: [companies.id],
+  }),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({

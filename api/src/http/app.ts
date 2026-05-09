@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { env } from "../config/env.js";
 import { healthRoutes } from "./routes/health.routes.js";
 import { authRoutes } from "./routes/auth.routes.js";
+import { customersRoutes } from "./routes/customers.routes.js";
+import { suppliersRoutes } from "./routes/suppliers.routes.js";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
 
@@ -35,6 +37,8 @@ export function buildApp() {
 
   app.register(healthRoutes, { prefix: "/v1" });
   app.register(authRoutes, { prefix: "/v1" });
+  app.register(customersRoutes, { prefix: "/v1" });
+  app.register(suppliersRoutes, { prefix: "/v1" });
 
   return app;
 }

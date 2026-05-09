@@ -64,7 +64,7 @@ async function testAuthFlow() {
     }
     const meData = await meRes.json() as { user?: { fullName?: string } };
     console.log(`✅ GET /me OK (Welcome, ${meData.user?.fullName || "User"})`);
-  } catch (error) {
+  } catch {
     console.error("❌ GET /me request failed.");
     process.exit(1);
   }
@@ -97,7 +97,7 @@ async function testAuthFlow() {
        sessionCookie = null; // We clear it anyway to test the next step
     }
 
-  } catch (error) {
+  } catch {
     console.error("❌ Logout request failed.");
     process.exit(1);
   }
@@ -121,7 +121,7 @@ async function testAuthFlow() {
       console.error(`❌ Post-logout validation failed. Expected 401, got ${meRes2.status}`);
       process.exit(1);
     }
-  } catch (error) {
+  } catch {
     console.error("❌ Post-logout request failed.");
     process.exit(1);
   }
