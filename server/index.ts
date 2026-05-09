@@ -2,7 +2,7 @@ import { getExpenses } from "./routes/expenses.routes";
 
 async function main() {
   const expenses = await getExpenses();
-  console.log(JSON.stringify({ count: expenses.length, expenses }, null, 2));
+  console.log(JSON.stringify({ count: expenses.length }, null, 2));
 }
 
 main().catch((error) => {
