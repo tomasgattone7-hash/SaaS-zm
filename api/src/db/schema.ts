@@ -40,6 +40,7 @@ export const users = pgTable(
     fullName: text("full_name").notNull(),
     authProvider: text("auth_provider"),
     authSubject: text("auth_subject"),
+    passwordHash: text("password_hash"),
     status: text("status").notNull().default("invited"),
     isPlatformAdmin: boolean("is_platform_admin").notNull().default(false),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
@@ -59,14 +60,13 @@ export const roles = pgTable(
   "roles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    code: text("code").notNull(),
+    code: text("code").notNull().unique(),
     name: text("name").notNull(),
     description: text("description"),
     isSystem: boolean("is_system").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("roles_code_unique").on(sql`lower(${table.code})`),
     check("roles_code_format_check", sql`${table.code} ~ '^[a-z_]+$'`),
   ],
 );

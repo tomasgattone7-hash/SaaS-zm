@@ -8,6 +8,20 @@
       "when": 1778351206218,
       "tag": "0000_concerned_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778354866733,
+      "tag": "0001_flowery_emma_frost",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778355094328,
+      "tag": "0002_square_revanche",
+      "breakpoints": true
     }
   ]
 }

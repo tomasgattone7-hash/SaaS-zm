@@ -7,6 +7,7 @@ const envSchema = z.object({
   API_PORT: z.coerce.number().int().positive().default(4000),
   WEB_ORIGIN: z.string().url().optional(),
   DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32).default("supersecretjwtkeythatisverylong123"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

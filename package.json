@@ -12,6 +12,7 @@
     "api:check": "tsc -p tsconfig.api.json --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx api/src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -19,9 +20,15 @@
     "preview:stable": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.2.0",
+    "@fastify/jwt": "^10.0.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.105.4",
+    "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "doker": "^0.0.8",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "fastify": "^5.8.5",
@@ -36,6 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4.3.0",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.12.2",
     "@types/pg": "^8.20.0",
     "@types/react": "^18.3.23",
