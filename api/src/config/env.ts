@@ -8,6 +8,10 @@ const envSchema = z.object({
   WEB_ORIGIN: z.string().url().optional(),
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string().min(32).default("supersecretjwtkeythatisverylong123"),
+  DEV_ADMIN_EMAIL: z.string().email().optional(),
+  DEV_ADMIN_PASSWORD: z.string().min(6).optional(),
+  DEV_ADMIN_NAME: z.string().min(2).optional(),
+  DEV_COMPANY_NAME: z.string().min(2).optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

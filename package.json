@@ -14,6 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx api/src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
+    "api:test-auth": "tsx api/src/scripts/test-auth.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

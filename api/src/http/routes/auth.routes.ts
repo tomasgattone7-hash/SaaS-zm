@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { db } from "../../db/client.js";
-import { users, auditLogs } from "../../db/schema.js";
+import { users, auditLogs, companies, roles, memberships } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { requireAuth } from "../middlewares/auth.js";
@@ -11,7 +11,76 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
+const bootstrapSchema = z.object({
+  companyName: z.string().min(2),
+  userName: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
 export async function authRoutes(app: FastifyInstance) {
+  app.post("/auth/bootstrap", async (request, reply) => {
+    const parsed = bootstrapSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send({ message: "Invalid request body", errors: parsed.error.issues });
+    }
+
+    const existingUsers = await db.query.users.findFirst();
+    const existingCompanies = await db.query.companies.findFirst();
+
+    if (existingUsers || existingCompanies) {
+      return reply.status(403).send({ message: "Bootstrap has already been completed" });
+    }
+
+    const { companyName, userName, email, password } = parsed.data;
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const slug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
+    await db.transaction(async (tx) => {
+      const [company] = await tx.insert(companies).values({
+        legalName: companyName,
+        displayName: companyName,
+        slug,
+      }).returning();
+
+      const [user] = await tx.insert(users).values({
+        email,
+        fullName: userName,
+        passwordHash,
+        status: "active",
+      }).returning();
+
+      const role = await tx.query.roles.findFirst({
+        where: eq(roles.code, "owner"),
+      });
+
+      if (!role) {
+        throw new Error("Owner role not found. Did you run the seed script?");
+      }
+
+      const [membership] = await tx.insert(memberships).values({
+        companyId: company.id,
+        userId: user.id,
+        roleId: role.id,
+        status: "active",
+      }).returning();
+
+      await tx.insert(auditLogs).values({
+        companyId: company.id,
+        actorUserId: user.id,
+        membershipId: membership.id,
+        action: "system.bootstrap",
+        entityTable: "companies",
+        entityId: company.id,
+        ipAddress: request.ip,
+        userAgent: request.headers["user-agent"],
+      });
+    });
+
+    return reply.send({ message: "Bootstrap completed successfully" });
+  });
+
   app.post("/auth/login", async (request, reply) => {
     const parsed = loginSchema.safeParse(request.body);
     if (!parsed.success) {
